@@ -71,7 +71,7 @@ const Page = () => (
   <>
     <Head>
       <title>
-        Companies | Devias Kit
+        Companies | Sapien Eleven
       </title>
     </Head>
     <Box

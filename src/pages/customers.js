@@ -199,7 +199,7 @@ const Page = () => {
     <>
       <Head>
         <title>
-          Customers | Devias Kit
+          Customers | Sapien Eleven
         </title>
       </Head>
       <Box
