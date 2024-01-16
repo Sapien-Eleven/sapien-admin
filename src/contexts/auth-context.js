@@ -20,16 +20,16 @@ const handlers = {
         return {
             ...state,
             ...(
-              // if payload (user) is provided, then is authenticated
-              user
-                ? ({
-                    isAuthenticated: true,
-                    isLoading: false,
-                    user
-                })
-                : ({
-                    isLoading: false
-                })
+                // if payload (user) is provided, then is authenticated
+                user
+                    ? ({
+                        isAuthenticated: true,
+                        isLoading: false,
+                        user
+                    })
+                    : ({
+                        isLoading: false
+                    })
             )
         };
     },
@@ -52,7 +52,7 @@ const handlers = {
 };
 
 const reducer = (state, action) => (
-  handlers[action.type] ? handlers[action.type](state, action) : state
+    handlers[action.type] ? handlers[action.type](state, action) : state
 );
 
 // The role of this context is to propagate authentication state through the App tree.
@@ -100,11 +100,11 @@ export const AuthProvider = (props) => {
     };
 
     useEffect(
-      () => {
-          initialize();
-      },
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-      []
+        () => {
+            initialize();
+        },
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        []
     );
 
     const skip = () => {
@@ -128,10 +128,6 @@ export const AuthProvider = (props) => {
     };
 
     const signIn = async (email, password) => {
-        if (email !== 'demo@devias.io' || password !== 'Password123!') {
-            throw new Error('Please check your email and password');
-        }
-
         try {
             window.sessionStorage.setItem('authenticated', 'true');
         } catch (err) {
@@ -162,17 +158,17 @@ export const AuthProvider = (props) => {
     };
 
     return (
-      <AuthContext.Provider
-        value={{
-            ...state,
-            skip,
-            signIn,
-            signUp,
-            signOut
-        }}
-      >
-          {children}
-      </AuthContext.Provider>
+        <AuthContext.Provider
+            value={{
+                ...state,
+                skip,
+                signIn,
+                signUp,
+                signOut
+            }}
+        >
+            {children}
+        </AuthContext.Provider>
     );
 };
 

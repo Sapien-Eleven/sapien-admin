@@ -1,3 +1,6 @@
 module.exports = {
-  reactStrictMode: true
+    reactStrictMode: true,
+    publicRuntimeConfig: {
+        SERVER_URL: 'http://localhost:3030/'
+    }
 };
