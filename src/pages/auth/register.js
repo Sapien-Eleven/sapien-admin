@@ -40,8 +40,7 @@ const Page = () => {
                 const result = await onSignup(values.name, values.email, values.password);
                 if (result !== null) {
                     if (result.status === 'success') {
-                        await auth.signUp(values.email, values.name, values.password);
-                        router.push('/');
+                        router.push('/auth/login');
                     } else {
                         setErrorMessage(result.comment);
                         helpers.setStatus({ success: false });

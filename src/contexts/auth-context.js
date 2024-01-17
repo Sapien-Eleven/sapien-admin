@@ -127,41 +127,12 @@ export const AuthProvider = (props) => {
         });
     };
 
-    const signIn = async (email, password) => {
+    const signIn = async (user) => {
         try {
             window.sessionStorage.setItem('authenticated', 'true');
         } catch (err) {
             console.error(err);
         }
-
-        const user = {
-            id: '5e86809283e28b96d2d38537',
-            avatar: '/assets/avatars/avatar-anika-visser.png',
-            name: 'Anika Visser',
-            email,
-            password
-        };
-
-        dispatch({
-            type: HANDLERS.SIGN_IN,
-            payload: user
-        });
-    };
-
-    const signUp = async (email, name, password) => {
-        try {
-            window.sessionStorage.setItem('authenticated', 'true');
-        } catch (err) {
-            console.error(err);
-        }
-
-        const user = {
-            id: '5e86809283e28b96d2d38537',
-            avatar: '/assets/avatars/avatar-anika-visser.png',
-            name: name,
-            email,
-            password
-        };
 
         dispatch({
             type: HANDLERS.SIGN_IN,
@@ -181,7 +152,6 @@ export const AuthProvider = (props) => {
                 ...state,
                 skip,
                 signIn,
-                signUp,
                 signOut
             }}
         >

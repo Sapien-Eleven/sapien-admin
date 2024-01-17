@@ -43,7 +43,7 @@ const Page = () => {
                 const result = await onLogin(values.email, values.password);
                 if (result != null) {
                     if (result.status === 'success') {
-                        await auth.signIn(values.email, values.password);
+                        await auth.signIn(result.user);
                         router.push('/');
                     } else {
                         setErrorMessage(result.comment);
