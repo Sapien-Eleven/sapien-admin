@@ -46,7 +46,6 @@ const Page = () => {
             password: Yup
                 .string()
                 .max(255)
-                .required('Password is required')
         }),
         onSubmit: async (values, helpers) => {
             try {
