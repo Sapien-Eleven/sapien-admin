@@ -17,6 +17,8 @@ import { Scrollbar } from 'src/components/scrollbar';
 import { getInitials } from 'src/utils/get-initials';
 import { PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
 import moment from 'moment';
+import { useCallback } from 'react';
+import { useRouter } from 'next/router';
 
 export const CustomersTable = (props) => {
     const {
@@ -32,9 +34,24 @@ export const CustomersTable = (props) => {
         rowsPerPage = 0,
         selected = []
     } = props;
+    const router = useRouter();
 
     const selectedSome = (selected.length > 0) && (selected.length < items.length);
     const selectedAll = (items.length > 0) && (selected.length === items.length);
+    const handleEditButton = useCallback(
+        (user) => {
+            router.push({
+                pathname: '/customers/edit',
+                query: {user: JSON.stringify(user)}
+            });
+        },
+        []
+    )
+    const handleDeleteButton = useCallback(
+        () => {
+        },
+        []
+    )
 
     return (
         <Card>
@@ -119,12 +136,12 @@ export const CustomersTable = (props) => {
                                                 direction='row'
                                                 spacing={2}
                                             >
-                                                <IconButton>
+                                                <IconButton onClick={() => handleEditButton(customer)} >
                                                     <SvgIcon fontSize={'small'}>
                                                         <PencilIcon/>
                                                     </SvgIcon>
                                                 </IconButton>
-                                                <IconButton>
+                                                <IconButton onClick={handleDeleteButton}>
                                                     <SvgIcon fontSize={'small'}>
                                                         <TrashIcon/>
                                                     </SvgIcon>

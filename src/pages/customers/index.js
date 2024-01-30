@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import Head from 'next/head';
-import PlusIcon from '@heroicons/react/24/solid/PlusIcon';
 import { Box, Button, Container, Stack, SvgIcon, Typography } from '@mui/material';
 import { useSelection } from 'src/hooks/use-selection';
 import { Layout as DashboardLayout } from 'src/layouts/dashboard/layout';
@@ -9,6 +8,7 @@ import { CustomersSearch } from 'src/sections/customer/customers-search';
 import { applyPagination } from 'src/utils/apply-pagination';
 import axios from 'axios';
 import getConfig from 'next/config';
+import UserPlusIcon from '@heroicons/react/24/outline/UserPlusIcon';
 
 const useCustomers = (users, page, rowsPerPage) => {
     return useMemo(
@@ -106,7 +106,7 @@ const Page = () => {
                                 <Button
                                     startIcon={(
                                         <SvgIcon fontSize="small">
-                                            <PlusIcon/>
+                                            <UserPlusIcon />
                                         </SvgIcon>
                                     )}
                                     variant="contained"

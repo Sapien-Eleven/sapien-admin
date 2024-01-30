@@ -83,7 +83,7 @@ material-kit-react
 		├── _document.js
 		├── account.js
 		├── companies.js
-		├── customers.js
+		├── index.js
 		├── index.js
 		├── products.js
 		└── settings.js
