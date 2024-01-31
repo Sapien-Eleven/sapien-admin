@@ -9,6 +9,7 @@ import { applyPagination } from 'src/utils/apply-pagination';
 import axios from 'axios';
 import getConfig from 'next/config';
 import UserPlusIcon from '@heroicons/react/24/outline/UserPlusIcon';
+import { useRouter } from 'next/router';
 
 const useCustomers = (users, page, rowsPerPage) => {
     return useMemo(
@@ -42,6 +43,7 @@ const Page = () => {
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [users, setUsers] = useState([]);
     const [searchWord, setSearchWord] = useState('');
+    const router = useRouter();
     const { publicRuntimeConfig } = getConfig();
     useEffect(() => {
         const fetchCustomers = async () => {
@@ -74,6 +76,12 @@ const Page = () => {
             setSearchWord(event.target.value);
         },
         []
+    )
+
+    const handleAddButton = useCallback(
+        () => {
+            router.push('/customers/add');
+        }
     )
 
     return (
@@ -110,6 +118,7 @@ const Page = () => {
                                         </SvgIcon>
                                     )}
                                     variant="contained"
+                                    onClick={handleAddButton}
                                 >
                                     Add
                                 </Button>
