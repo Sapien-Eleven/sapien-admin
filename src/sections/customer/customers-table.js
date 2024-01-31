@@ -19,6 +19,10 @@ import { PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
 import moment from 'moment';
 import { useCallback } from 'react';
 import { useRouter } from 'next/router';
+import Swal from 'sweetalert2';
+import { enqueueSnackbar } from 'notistack';
+import axios from 'axios';
+import getConfig from 'next/config';
 
 export const CustomersTable = (props) => {
     const {
@@ -30,11 +34,13 @@ export const CustomersTable = (props) => {
         onRowsPerPageChange,
         onSelectAll,
         onSelectOne,
+        onDeleteUser,
         page = 0,
         rowsPerPage = 0,
         selected = []
     } = props;
     const router = useRouter();
+    const {publicRuntimeConfig} = getConfig();
 
     const selectedSome = (selected.length > 0) && (selected.length < items.length);
     const selectedAll = (items.length > 0) && (selected.length === items.length);
@@ -48,7 +54,21 @@ export const CustomersTable = (props) => {
         []
     )
     const handleDeleteButton = useCallback(
-        () => {
+        (user) => {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Confirm',
+                text: 'Do you really want to delete this user permanently?',
+                confirmButtonText: 'OK',
+                showCancelButton: true,
+                cancelButtonText: "Cancel",
+                closeOnConfirm: true,
+                closeOnCancel: false
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    props.onDeleteUser(user)
+                }
+            })
         },
         []
     )
@@ -141,7 +161,7 @@ export const CustomersTable = (props) => {
                                                         <PencilIcon/>
                                                     </SvgIcon>
                                                 </IconButton>
-                                                <IconButton onClick={handleDeleteButton}>
+                                                <IconButton onClick={() => handleDeleteButton(customer)}>
                                                     <SvgIcon
                                                         fontSize={'small'}
                                                         sx={{color: 'red'}}
@@ -180,6 +200,7 @@ CustomersTable.propTypes = {
     onRowsPerPageChange: PropTypes.func,
     onSelectAll: PropTypes.func,
     onSelectOne: PropTypes.func,
+    onDeleteUser: PropTypes.func,
     page: PropTypes.number,
     rowsPerPage: PropTypes.number,
     selected: PropTypes.array

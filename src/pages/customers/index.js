@@ -10,6 +10,7 @@ import axios from 'axios';
 import getConfig from 'next/config';
 import UserPlusIcon from '@heroicons/react/24/outline/UserPlusIcon';
 import { useRouter } from 'next/router';
+import { enqueueSnackbar } from 'notistack';
 
 const useCustomers = (users, page, rowsPerPage) => {
     return useMemo(
@@ -46,12 +47,12 @@ const Page = () => {
     const router = useRouter();
     const { publicRuntimeConfig } = getConfig();
     useEffect(() => {
-        const fetchCustomers = async () => {
-            const data = (await axios.post(`${publicRuntimeConfig.SERVER_URL}getUsers`)).data;
-            if (data.status === 'success') setUsers(data.users.map((item) => ({...item, avatar: '/assets/avatars/avatar-jie-yan-song.png',})));
-        }
         fetchCustomers().then();
     }, [])
+    const fetchCustomers = async () => {
+        const data = (await axios.post(`${publicRuntimeConfig.SERVER_URL}getUsers`)).data;
+        if (data.status === 'success') setUsers(data.users.map((item) => ({...item, avatar: '/assets/avatars/avatar-jie-yan-song.png',})));
+    }
     const filteredCustomers = useFilteredCustomers(users, searchWord);
     const customers = useCustomers(filteredCustomers, page, rowsPerPage);
     const customersIds = useCustomerIds(customers);
@@ -83,6 +84,23 @@ const Page = () => {
             router.push('/customers/add');
         }
     )
+
+    const deleteUser = async (user) => {
+        try {
+            const result = (await axios.post(`${publicRuntimeConfig.SERVER_URL}deleteUser`, {
+                id: user._id,
+                email: user.email
+            })).data;
+            if (result.status === 'success') {
+                enqueueSnackbar('Successfully deleted!', {variant: 'success'});
+                await fetchCustomers();
+            } else {
+                enqueueSnackbar(result.comment, {variant: 'error'});
+            }
+        } catch (e) {
+            enqueueSnackbar(e.toString(), {variant: 'error'});
+        }
+    }
 
     return (
         <>
@@ -134,6 +152,7 @@ const Page = () => {
                             onRowsPerPageChange={handleRowsPerPageChange}
                             onSelectAll={customersSelection.handleSelectAll}
                             onSelectOne={customersSelection.handleSelectOne}
+                            onDeleteUser={deleteUser}
                             page={page}
                             rowsPerPage={rowsPerPage}
                             selected={customersSelection.selected}
