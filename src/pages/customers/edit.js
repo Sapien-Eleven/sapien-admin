@@ -13,19 +13,19 @@ import {
     Typography
 } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2';
-import { ArrowLeftIcon, CheckIcon } from '@heroicons/react/24/outline';
-import { useCallback, useEffect, useState } from 'react';
+import { ArrowLeftIcon } from '@heroicons/react/24/outline';
+import { useCallback } from 'react';
 import { getInitials } from '../../utils/get-initials';
 import axios from 'axios';
 import getConfig from 'next/config';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import { publicRuntimeConfig } from '../../../next.config';
 import { enqueueSnackbar } from 'notistack';
 
 const Page = () => {
     const router = useRouter();
     const user = JSON.parse(router.query.user);
+    const { publicRuntimeConfig } = getConfig();
     const formik = useFormik({
         initialValues: {
             email: user.email,

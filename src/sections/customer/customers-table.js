@@ -142,7 +142,10 @@ export const CustomersTable = (props) => {
                                                     </SvgIcon>
                                                 </IconButton>
                                                 <IconButton onClick={handleDeleteButton}>
-                                                    <SvgIcon fontSize={'small'}>
+                                                    <SvgIcon
+                                                        fontSize={'small'}
+                                                        sx={{color: 'red'}}
+                                                    >
                                                         <TrashIcon/>
                                                     </SvgIcon>
                                                 </IconButton>
