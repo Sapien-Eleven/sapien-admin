@@ -3,61 +3,61 @@ import Head from 'next/head';
 import { Box, Button, Container, Stack, SvgIcon, Typography } from '@mui/material';
 import { useSelection } from 'src/hooks/use-selection';
 import { Layout as DashboardLayout } from 'src/layouts/dashboard/layout';
-import { CustomersTable } from 'src/sections/customer/customers-table';
-import { CustomersSearch } from 'src/sections/customer/customers-search';
 import { applyPagination } from 'src/utils/apply-pagination';
 import axios from 'axios';
 import getConfig from 'next/config';
 import UserPlusIcon from '@heroicons/react/24/outline/UserPlusIcon';
 import { useRouter } from 'next/router';
 import { enqueueSnackbar } from 'notistack';
+import { WhitelistsSearch } from 'src/sections/whitelists/whitelists-search';
+import { WhitelistsTable } from 'src/sections/whitelists/whitelists-table';
 
-const useCustomers = (users, page, rowsPerPage) => {
+const useWhitelists = (whitelists, page, rowsPerPage) => {
     return useMemo(
         () => {
-            return applyPagination(users, page, rowsPerPage);
+            return applyPagination(whitelists, page, rowsPerPage);
         },
-        [users, page, rowsPerPage]
+        [whitelists, page, rowsPerPage]
     );
 };
 
-const useFilteredCustomers = (users, key) => {
+const useFilteredWhitelists = (whitelists, key) => {
     return useMemo(
         () => {
-            return users.filter((user) => user.name.toLowerCase().includes(key.toLowerCase()))
+            return whitelists.filter((whitelist) => whitelist.wallet_address.toLowerCase().includes(key.toLowerCase()) || whitelist.owner.toLowerCase().includes(key.toLowerCase()))
         },
-        [users, key]
+        [whitelists, key]
     )
 }
 
-const useCustomerIds = (customers) => {
+const useDataIds = (finalWhitelists) => {
     return useMemo(
         () => {
-            return customers.map((customer) => customer._id);
+            return finalWhitelists.map((item) => item._id);
         },
-        [customers]
+        [finalWhitelists]
     );
 };
 
 const Page = () => {
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
-    const [users, setUsers] = useState([]);
+    const [whitelists, setWhitelists] = useState([]);
     const [searchWord, setSearchWord] = useState('');
     const router = useRouter();
     const { publicRuntimeConfig } = getConfig();
     useEffect(() => {
-        fetchCustomers().then();
+        fetchWhitelists().then();
     }, [])
-    const fetchCustomers = async () => {
-        const data = (await axios.post(`${publicRuntimeConfig.SERVER_URL}getUsers`)).data;
-        if (data.status === 'success') setUsers(data.users.map((item) => ({...item, avatar: '/assets/avatars/avatar-jie-yan-song.png',})));
-        else if (data.status === 'empty') setUsers([]);
+    const fetchWhitelists = async () => {
+        const data = (await axios.post(`${publicRuntimeConfig.SERVER_URL}getWhitelists`)).data;
+        if (data.status === 'success') setWhitelists(data.whitelists);
+        else if (data.status === 'empty') setWhitelists([]);
     }
-    const filteredCustomers = useFilteredCustomers(users, searchWord);
-    const customers = useCustomers(filteredCustomers, page, rowsPerPage);
-    const customersIds = useCustomerIds(customers);
-    const customersSelection = useSelection(customersIds);
+    const filteredWhitelists = useFilteredWhitelists(whitelists, searchWord);
+    const finalWhitelists = useWhitelists(filteredWhitelists, page, rowsPerPage);
+    const dataIds = useDataIds(finalWhitelists);
+    const dataSelection = useSelection(dataIds);
 
     const handlePageChange = useCallback(
         (event, value) => {
@@ -82,20 +82,20 @@ const Page = () => {
 
     const handleAddButton = useCallback(
         () => {
-            router.push('/customers/add');
+            router.push('/whitelists/add');
         },
         []
     )
 
-    const deleteUser = async (user) => {
+    const deleteWalletAddress = async (walletAddress) => {
         try {
-            const result = (await axios.post(`${publicRuntimeConfig.SERVER_URL}deleteUser`, {
-                id: user._id,
-                email: user.email
+            const result = (await axios.post(`${publicRuntimeConfig.SERVER_URL}deleteWalletAddress`, {
+                _id: walletAddress._id,
+                wallet_address: walletAddress.wallet_address
             })).data;
             if (result.status === 'success') {
                 enqueueSnackbar('Successfully deleted!', {variant: 'success'});
-                await fetchCustomers();
+                await fetchWhitelists();
             } else {
                 enqueueSnackbar(result.comment, {variant: 'error'});
             }
@@ -108,7 +108,7 @@ const Page = () => {
         <>
             <Head>
                 <title>
-                    Customers | Sapien Eleven
+                    Whitelists | Sapien Eleven
                 </title>
             </Head>
             <Box
@@ -127,7 +127,7 @@ const Page = () => {
                         >
                             <Stack spacing={1}>
                                 <Typography variant="h4">
-                                    Customers
+                                    Whitelists
                                 </Typography>
                             </Stack>
                             <div>
@@ -144,20 +144,20 @@ const Page = () => {
                                 </Button>
                             </div>
                         </Stack>
-                        <CustomersSearch onSearch={handleSearch} />
-                        <CustomersTable
-                            count={users.length}
-                            items={customers}
-                            onDeselectAll={customersSelection.handleDeselectAll}
-                            onDeselectOne={customersSelection.handleDeselectOne}
+                        <WhitelistsSearch onSearch={handleSearch} />
+                        <WhitelistsTable
+                            count={whitelists.length}
+                            items={finalWhitelists}
+                            onDeselectAll={dataSelection.handleDeselectAll}
+                            onDeselectOne={dataSelection.handleDeselectOne}
                             onPageChange={handlePageChange}
                             onRowsPerPageChange={handleRowsPerPageChange}
-                            onSelectAll={customersSelection.handleSelectAll}
-                            onSelectOne={customersSelection.handleSelectOne}
-                            onDeleteUser={deleteUser}
+                            onSelectAll={dataSelection.handleSelectAll}
+                            onSelectOne={dataSelection.handleSelectOne}
+                            onDeleteWalletAddress={deleteWalletAddress}
                             page={page}
                             rowsPerPage={rowsPerPage}
-                            selected={customersSelection.selected}
+                            selected={dataSelection.selected}
                         />
                     </Stack>
                 </Container>

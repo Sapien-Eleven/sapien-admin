@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types';
 import {
-    Avatar,
     Box,
     Card,
     Checkbox, IconButton,
@@ -11,18 +10,26 @@ import {
     TableHead,
     TablePagination,
     TableRow,
-    Typography
 } from '@mui/material';
 import { Scrollbar } from 'src/components/scrollbar';
-import { getInitials } from 'src/utils/get-initials';
 import { PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
-import moment from 'moment';
 import { useCallback } from 'react';
 import { useRouter } from 'next/router';
 import Swal from 'sweetalert2';
-import getConfig from 'next/config';
+import { SeverityPill } from '../../components/severity-pill';
 
-export const CustomersTable = (props) => {
+const statusMap = [
+    {
+        status: 'deleted',
+        color: 'error'
+    },
+    {
+        status: 'active',
+        color: 'success'
+    }
+]
+
+export const WhitelistsTable = (props) => {
     const {
         count = 0,
         items = [],
@@ -32,31 +39,30 @@ export const CustomersTable = (props) => {
         onRowsPerPageChange,
         onSelectAll,
         onSelectOne,
-        onDeleteUser,
+        onDeleteWalletAddress,
         page = 0,
         rowsPerPage = 0,
         selected = []
     } = props;
     const router = useRouter();
-    const {publicRuntimeConfig} = getConfig();
 
     const selectedSome = (selected.length > 0) && (selected.length < items.length);
     const selectedAll = (items.length > 0) && (selected.length === items.length);
     const handleEditButton = useCallback(
-        (user) => {
+        (wallet_address) => {
             router.push({
-                pathname: '/customers/edit',
-                query: {user: JSON.stringify(user)}
+                pathname: '/whitelists/edit',
+                query: {wallet_address: JSON.stringify(wallet_address)}
             });
         },
         []
     )
     const handleDeleteButton = useCallback(
-        (user) => {
+        (walletAddress) => {
             Swal.fire({
                 icon: 'warning',
                 title: 'Confirm',
-                text: 'Do you really want to delete this user permanently?',
+                text: 'Do you really want to remove this wallet address from whitelist?',
                 confirmButtonText: 'OK',
                 showCancelButton: true,
                 cancelButtonText: "Cancel",
@@ -64,7 +70,7 @@ export const CustomersTable = (props) => {
                 closeOnCancel: false
             }).then(async (result) => {
                 if (result.isConfirmed) {
-                    onDeleteUser?.(user)
+                    onDeleteWalletAddress?.(walletAddress);
                 }
             })
         },
@@ -92,13 +98,19 @@ export const CustomersTable = (props) => {
                                     />
                                 </TableCell>
                                 <TableCell>
-                                    Name
+                                    Wallet Address
                                 </TableCell>
                                 <TableCell>
-                                    Email
+                                    Owner
                                 </TableCell>
                                 <TableCell>
-                                    Signed Up
+                                    Expiry Date
+                                </TableCell>
+                                <TableCell>
+                                    Added Date
+                                </TableCell>
+                                <TableCell>
+                                    Status
                                 </TableCell>
                                 <TableCell>
                                     Actions
@@ -106,14 +118,14 @@ export const CustomersTable = (props) => {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {items.map((customer) => {
-                                const isSelected = selected.includes(customer._id);
-                                const signedAt = moment(customer.registered_at).format('DD/MM/yyyy')
+                            {items.map((item) => {
+                                const isSelected = selected.includes(item._id);
+                                const signedAt = item.registered_at.split(' ')[0]
 
                                 return (
                                     <TableRow
                                         hover
-                                        key={customer._id}
+                                        key={item._id}
                                         selected={isSelected}
                                     >
                                         <TableCell padding="checkbox">
@@ -121,32 +133,29 @@ export const CustomersTable = (props) => {
                                                 checked={isSelected}
                                                 onChange={(event) => {
                                                     if (event.target.checked) {
-                                                        onSelectOne?.(customer._id);
+                                                        onSelectOne?.(item._id);
                                                     } else {
-                                                        onDeselectOne?.(customer._id);
+                                                        onDeselectOne?.(item._id);
                                                     }
                                                 }}
                                             />
                                         </TableCell>
                                         <TableCell>
-                                            <Stack
-                                                alignItems="center"
-                                                direction="row"
-                                                spacing={2}
-                                            >
-                                                <Avatar src={customer.avatar}>
-                                                    {getInitials(customer.name)}
-                                                </Avatar>
-                                                <Typography variant="subtitle2">
-                                                    {customer.name}
-                                                </Typography>
-                                            </Stack>
+                                            {item.wallet_address}
                                         </TableCell>
                                         <TableCell>
-                                            {customer.email}
+                                            {item.owner}
+                                        </TableCell>
+                                        <TableCell>
+                                            {item.expired_at}
                                         </TableCell>
                                         <TableCell>
                                             {signedAt}
+                                        </TableCell>
+                                        <TableCell>
+                                            <SeverityPill color={statusMap[item.status].color}>
+                                                {statusMap[item.status].status}
+                                            </SeverityPill>
                                         </TableCell>
                                         <TableCell>
                                             <Stack
@@ -154,12 +163,12 @@ export const CustomersTable = (props) => {
                                                 direction='row'
                                                 spacing={2}
                                             >
-                                                <IconButton onClick={() => handleEditButton(customer)} >
+                                                <IconButton onClick={() => handleEditButton(item)} >
                                                     <SvgIcon fontSize={'small'}>
                                                         <PencilIcon/>
                                                     </SvgIcon>
                                                 </IconButton>
-                                                <IconButton onClick={() => handleDeleteButton(customer)}>
+                                                <IconButton onClick={() => handleDeleteButton(item)}>
                                                     <SvgIcon
                                                         fontSize={'small'}
                                                         sx={{color: 'red'}}
@@ -189,7 +198,7 @@ export const CustomersTable = (props) => {
     );
 };
 
-CustomersTable.propTypes = {
+WhitelistsTable.propTypes = {
     count: PropTypes.number,
     items: PropTypes.array,
     onDeselectAll: PropTypes.func,
@@ -198,7 +207,7 @@ CustomersTable.propTypes = {
     onRowsPerPageChange: PropTypes.func,
     onSelectAll: PropTypes.func,
     onSelectOne: PropTypes.func,
-    onDeleteUser: PropTypes.func,
+    onDeleteWalletAddress: PropTypes.func,
     page: PropTypes.number,
     rowsPerPage: PropTypes.number,
     selected: PropTypes.array
