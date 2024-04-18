@@ -4,9 +4,9 @@ import {
     Box, Button,
     Card, CardContent,
     CardHeader,
-    Container, Divider,
-    Link,
-    Paper,
+    Container, Divider, FormControl, InputLabel,
+    Link, MenuItem,
+    Paper, Select,
     Stack,
     SvgIcon, TextField,
     Typography
@@ -28,6 +28,8 @@ const Page = () => {
         initialValues: {
             email: '',
             name: '',
+            wallet_address: '',
+            duration: 5,
             password: '',
             confirm_password: '',
             submit: null
@@ -42,6 +44,12 @@ const Page = () => {
                 .string()
                 .max(255)
                 .required('Name is required'),
+            wallet_address: Yup
+                .string()
+                .max(255),
+            duration: Yup
+                .number()
+                .required('Duration is required'),
             password: Yup
                 .string()
                 .max(255)
@@ -57,6 +65,8 @@ const Page = () => {
                 const result = (await axios.post(`${publicRuntimeConfig.SERVER_URL}signup`, {
                     name: values.name,
                     email: values.email,
+                    wallet_address: values.wallet_address,
+                    duration: values.duration,
                     password: values.password
                 })).data;
                 if (result.status === 'success') {
@@ -191,6 +201,42 @@ const Page = () => {
                                                     type="password"
                                                     value={formik.values.confirm_password}
                                                 />
+                                            </Grid>
+                                            <Grid
+                                                item
+                                                xs={12}
+                                                md={6}
+                                            >
+                                                <TextField
+                                                    error={!!(formik.touched.wallet_address && formik.errors.wallet_address)}
+                                                    fullWidth
+                                                    helperText={formik.touched.wallet_address && formik.errors.wallet_address}
+                                                    label="Wallet Address"
+                                                    name="wallet_address"
+                                                    onBlur={formik.handleBlur}
+                                                    onChange={formik.handleChange}
+                                                    value={formik.values.wallet_address}
+                                                />
+                                            </Grid>
+                                            <Grid
+                                                item
+                                                xs={12}
+                                                md={6}
+                                            >
+                                                <FormControl required fullWidth>
+                                                    <InputLabel id="duration-select-label">Duration</InputLabel>
+                                                    <Select
+                                                        labelId={'duration-select-label'}
+                                                        label={'Duration'}
+                                                        name={'duration'}
+                                                        value={formik.values.duration}
+                                                        onChange={formik.handleChange}
+                                                    >
+                                                        <MenuItem value={5}>5</MenuItem>
+                                                        <MenuItem value={10}>10</MenuItem>
+                                                        <MenuItem value={15}>15</MenuItem>
+                                                    </Select>
+                                                </FormControl>
                                             </Grid>
                                         </Grid>
                                     </CardContent>

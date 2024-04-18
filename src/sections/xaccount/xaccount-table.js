@@ -34,7 +34,7 @@ const statusMap = [
     }
 ]
 
-export const CustomersTable = (props) => {
+export const XAccountsTable = (props) => {
     const {
         count = 0,
         items = [],
@@ -104,34 +104,34 @@ export const CustomersTable = (props) => {
                                     />
                                 </TableCell>
                                 <TableCell>
+                                    Twitter / X Account
+                                </TableCell>
+                                <TableCell>
                                     Name
                                 </TableCell>
                                 <TableCell>
                                     Email
                                 </TableCell>
                                 <TableCell>
-                                    Wallet Address
+                                    Total Points
                                 </TableCell>
                                 <TableCell>
-                                    WL Expired at
+                                    Authorized Access
                                 </TableCell>
                                 <TableCell>
-                                    WL Status
-                                </TableCell>
-                                <TableCell>
-                                    Actions
+                                    Date Joined
                                 </TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {items.map((customer) => {
-                                const isSelected = selected.includes(customer._id);
-                                const wl_status = !moment().isAfter(moment(customer.wl_expired_at, 'DD/MM/YYYY HH:m:s').toDate(), 'day') ? 1 : 0;
+                            {items.map((account) => {
+                                const isSelected = selected.includes(account._id);
+                                const authorized_access = account.authorized_access ? 'Yes' : 'No'
 
                                 return (
                                     <TableRow
                                         hover
-                                        key={customer._id}
+                                        key={account._id}
                                         selected={isSelected}
                                     >
                                         <TableCell padding="checkbox">
@@ -139,9 +139,9 @@ export const CustomersTable = (props) => {
                                                 checked={isSelected}
                                                 onChange={(event) => {
                                                     if (event.target.checked) {
-                                                        onSelectOne?.(customer._id);
+                                                        onSelectOne?.(account._id);
                                                     } else {
-                                                        onDeselectOne?.(customer._id);
+                                                        onDeselectOne?.(account._id);
                                                     }
                                                 }}
                                             />
@@ -152,48 +152,28 @@ export const CustomersTable = (props) => {
                                                 direction="row"
                                                 spacing={2}
                                             >
-                                                <Avatar src={customer.avatar}>
-                                                    {getInitials(customer.name)}
+                                                <Avatar src={account.avatar}>
+                                                    {getInitials(account.name)}
                                                 </Avatar>
                                                 <Typography variant="subtitle2">
-                                                    {customer.name}
+                                                    {account.username}
                                                 </Typography>
                                             </Stack>
                                         </TableCell>
                                         <TableCell>
-                                            {customer.email}
+                                            {account.name}
                                         </TableCell>
                                         <TableCell>
-                                            {customer.wallet_address}
+                                            {account.email}
                                         </TableCell>
                                         <TableCell>
-                                            {customer.wl_expired_at}
+                                            {account.total_points}
                                         </TableCell>
                                         <TableCell>
-                                            <SeverityPill color={statusMap[wl_status].color}>
-                                                {statusMap[wl_status].status}
-                                            </SeverityPill>
+                                            {authorized_access}
                                         </TableCell>
                                         <TableCell>
-                                            <Stack
-                                                alignItems='center'
-                                                direction='row'
-                                                spacing={2}
-                                            >
-                                                <IconButton onClick={() => handleEditButton(customer)} >
-                                                    <SvgIcon fontSize={'small'}>
-                                                        <PencilIcon/>
-                                                    </SvgIcon>
-                                                </IconButton>
-                                                <IconButton onClick={() => handleDeleteButton(customer)}>
-                                                    <SvgIcon
-                                                        fontSize={'small'}
-                                                        sx={{color: 'red'}}
-                                                    >
-                                                        <TrashIcon/>
-                                                    </SvgIcon>
-                                                </IconButton>
-                                            </Stack>
+                                            {account.joined_at}
                                         </TableCell>
                                     </TableRow>
                                 );
@@ -215,7 +195,7 @@ export const CustomersTable = (props) => {
     );
 };
 
-CustomersTable.propTypes = {
+XAccountsTable.propTypes = {
     count: PropTypes.number,
     items: PropTypes.array,
     onDeselectAll: PropTypes.func,

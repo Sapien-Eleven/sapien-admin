@@ -28,11 +28,11 @@ export const items = [
         )
     },
     {
-        title: 'Whitelists',
-        path: '/whitelists',
+        title: 'X Accounts',
+        path: '/xaccounts',
         icon: (
             <SvgIcon fontSize="small">
-                <UsersIcon/>
+                <UserIcon/>
             </SvgIcon>
         )
     },
