@@ -1,12 +1,8 @@
 import ChartBarIcon from '@heroicons/react/24/solid/ChartBarIcon';
-import CogIcon from '@heroicons/react/24/solid/CogIcon';
-import LockClosedIcon from '@heroicons/react/24/solid/LockClosedIcon';
-import ShoppingBagIcon from '@heroicons/react/24/solid/ShoppingBagIcon';
-import UserIcon from '@heroicons/react/24/solid/UserIcon';
-import UserPlusIcon from '@heroicons/react/24/solid/UserPlusIcon';
 import UsersIcon from '@heroicons/react/24/solid/UsersIcon';
-import XCircleIcon from '@heroicons/react/24/solid/XCircleIcon';
 import { SvgIcon } from '@mui/material';
+import XIcon from '@mui/icons-material/X';
+import DiscordIcon from '../../components/discord-icon';
 
 export const items = [
     {
@@ -32,8 +28,15 @@ export const items = [
         path: '/xaccounts',
         icon: (
             <SvgIcon fontSize="small">
-                <UserIcon/>
+                <XIcon/>
             </SvgIcon>
+        )
+    },
+    {
+        title: 'Discord Accounts',
+        path: '/discord_accounts',
+        icon: (
+            <DiscordIcon />
         )
     },
     // {
